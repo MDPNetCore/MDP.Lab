@@ -21,6 +21,9 @@ jobs:
         with:
           dotnet-version: '8.0' 
 
+      - name: Install MAUI workloads
+        run: dotnet workload install maui-ios maui-android
+
       - name: Install dependencies
         run: dotnet restore src/MauiApp1/MauiApp1.csproj
 
