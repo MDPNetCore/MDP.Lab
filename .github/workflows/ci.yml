@@ -40,11 +40,20 @@ jobs:
           mkdir -p output
           cp -r src/MauiApp1/bin/Release/net8.0-ios/iossimulator-arm64/* output/
 
+      - name: Create IPA file
+        run: |
+          mkdir -p output/ipa
+          xcodebuild -workspace src/MauiApp1/MauiApp1.xcworkspace -scheme MauiApp1 -sdk iphoneos -configuration Release archive -archivePath output/MauiApp1.xcarchive
+          xcodebuild -exportArchive -archivePath output/MauiApp1.xcarchive -exportPath output/ipa -exportOptionsPlist src/MauiApp1/ExportOptions.plist
+
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: mauiapp1-ios
-          path: output/
+          path: output/ipa/*.ipa
+
+      - name: Install GitHub CLI
+        run: brew install gh
 
       - name: Publish to GitHub Packages
         env:
@@ -52,4 +61,4 @@ jobs:
           GITHUB_ACTOR: ${{ secrets.DEPLOY_ACCOUNT }}
         run: |
           echo "Publishing to GitHub Packages"
-          dotnet nuget push output/*.nupkg --source https://nuget.pkg.github.com/${{ secrets.DEPLOY_ACCOUNT }}/index.json --api-key ${{ secrets.DEPLOY_CREDENTIALS }}
+          gh release create "release-$(date +'%Y%m%d%H%M%S')" output/ipa/*.ipa --repo MDPNetCore/MDP.Lab --title "Release $(date +'%Y-%m-%d %H:%M:%S')" --notes "Automated release from GitHub Actions"
