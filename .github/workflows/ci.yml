@@ -1,4 +1,4 @@
-name: Build and Test MAUI iOS App
+name: Build and Publish MAUI iOS App
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-ios:
+  build-and-publish-ios:
     runs-on: macos-latest
 
     steps:
@@ -34,3 +34,22 @@ jobs:
 
       - name: Build the project
         run: dotnet build --configuration Release -f net8.0-ios src/MauiApp1/MauiApp1.csproj
+
+      - name: Package the app
+        run: |
+          mkdir -p output
+          cp -r src/MauiApp1/bin/Release/net8.0-ios/iossimulator-arm64/* output/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: mauiapp1-ios
+          path: output/
+
+      - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_CREDENTIALS }}
+          GITHUB_ACTOR: ${{ secrets.DEPLOY_ACCOUNT }}
+        run: |
+          echo "Publishing to GitHub Packages"
+          dotnet nuget push output/*.nupkg --source https://nuget.pkg.github.com/${{ secrets.DEPLOY_ACCOUNT }}/index.json --api-key ${{ secrets.DEPLOY_CREDENTIALS }}
