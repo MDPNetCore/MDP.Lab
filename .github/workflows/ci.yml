@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-12
+    runs-on: macos-latest
 
     steps:
       - name: Checkout repository
@@ -19,7 +19,12 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '8.0'  # ¨Ï¥Î .NET 8
+          dotnet-version: '8.0'
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.1'
 
       - name: Install MAUI workloads
         run: dotnet workload install maui-ios maui-android maui-maccatalyst
