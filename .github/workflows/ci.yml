@@ -35,16 +35,13 @@ jobs:
       - name: Build the project
         run: dotnet build --configuration Release -f net8.0-ios src/MauiApp1/MauiApp1.csproj
 
+      - name: Publish the project
+        run: dotnet publish src/MauiApp1/MauiApp1.csproj -c Release -f net8.0-ios -o output --runtime ios-arm64 --self-contained true /p:ArchiveOnBuild=true
+
       - name: Package the app
         run: |
-          mkdir -p output
-          cp -r src/MauiApp1/bin/Release/net8.0-ios/iossimulator-arm64/* output/
-
-      - name: Create IPA file
-        run: |
           mkdir -p output/ipa
-          xcodebuild -workspace src/MauiApp1/MauiApp1.xcworkspace -scheme MauiApp1 -sdk iphoneos -configuration Release archive -archivePath output/MauiApp1.xcarchive
-          xcodebuild -exportArchive -archivePath output/MauiApp1.xcarchive -exportPath output/ipa -exportOptionsPlist src/MauiApp1/ExportOptions.plist
+          cp output/*.ipa output/ipa/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
