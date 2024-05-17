@@ -67,6 +67,7 @@
     <PropertyGroup>
       <PublishTrimmed>false</PublishTrimmed>
       <LinkerBehavior>LinkFramework</LinkerBehavior>
+      <MtouchLink>None</MtouchLink>
     </PropertyGroup>
 
 </Project>
