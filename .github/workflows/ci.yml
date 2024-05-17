@@ -22,7 +22,7 @@ jobs:
           dotnet-version: '8.0'  # ¨Ï¥Î .NET 8
 
       - name: Install MAUI workloads
-        run: dotnet workload install maui-ios maui-android
+        run: dotnet workload install maui-ios maui-android maui-maccatalyst
 
       - name: Install dependencies
         run: dotnet restore src/MauiApp1/MauiApp1.csproj
