@@ -68,28 +68,3 @@ mdp.blazor.interopManager = (function () {
         invokeMethodAsync: invokeMethodAsync
     };
 })();
-
-
-// mdp.blazor.authenticationManager
-mdp.blazor.authenticationManager = (function () {
-
-    // methods
-    function login(scheme, returnUrl) {
-
-        // Redirect
-        window.location.href = `/.auth/login/${scheme}?returnUrl=${encodeURIComponent(returnUrl)}`;
-    }
-
-    function logout(returnUrl) {
-
-        // Redirect
-        window.location.href = `/.auth/logout?returnUrl=${encodeURIComponent(returnUrl)}`;
-    }
-
-
-    // return
-    return {
-        login: login,
-        logout: logout
-    };
-})();
