@@ -3,10 +3,10 @@ name: Build and Publish MAUI iOS App
 on:
   push:
     branches:
-      - main
+      - mainX
   pull_request:
     branches:
-      - main
+      - mainX
 
 jobs:
   build-and-publish-ios:

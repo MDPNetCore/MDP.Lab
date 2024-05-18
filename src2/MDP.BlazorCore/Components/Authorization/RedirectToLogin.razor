@@ -1,0 +1,49 @@
+﻿@namespace MDP.BlazorCore
+@code {
+
+    // Fields
+    [Inject]
+    public NavigationManager _navigationManager { get; set; }
+
+    [Inject]
+    public AuthenticationStateProvider _authenticationStateProvider { get; set; }
+
+
+    // Properties
+    [Parameter]
+    public string LoginPath { get; set; } = null;
+
+    [Parameter]
+    public string AccessDeniedPath { get; set; } = null;
+
+
+    // Methods
+    protected override async Task OnInitializedAsync()
+    {
+        // ReturnUrl
+        var returnUrl = string.Empty;
+        if (string.IsNullOrEmpty(returnUrl) == true) returnUrl = (new Uri(_navigationManager.Uri)).PathAndQuery;
+        if (string.IsNullOrEmpty(returnUrl) == true) returnUrl = "/";
+
+        // Redirect
+        var user  = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User;
+        if (user != null && user.Identity?.IsAuthenticated == true)
+        {
+            // AccessDeniedPath
+            var accessDeniedPath = this.AccessDeniedPath;
+            if (string.IsNullOrEmpty(accessDeniedPath) == true) accessDeniedPath = "/";
+
+            // AccessDenied
+            _navigationManager.NavigateTo($"{accessDeniedPath}?returnUrl={Uri.EscapeDataString(returnUrl)}", true);
+        }
+        else
+        {
+            // LoginPath
+            var loginPath = this.LoginPath;
+            if (string.IsNullOrEmpty(loginPath) == true) loginPath = "/";
+
+            // Login
+            _navigationManager.NavigateTo($"{loginPath}?returnUrl={Uri.EscapeDataString(returnUrl)}", true);
+        }
+    }
+}
