@@ -48,7 +48,7 @@ namespace MDP.BlazorCore.Authorization.Maui
             // RoleAssignmentProvider
 
             // AccessPermissionProvider
-            serviceCollection.AddTransient<IAccessPermissionProvider>(serviceProvider =>
+            serviceCollection.AddSingleton<IAccessPermissionProvider>(serviceProvider =>
             {
                 // AccessPermissionList
                 var accessPermissionList = setting.Permissions?.Select(o => o.ToPermission()).ToList();
