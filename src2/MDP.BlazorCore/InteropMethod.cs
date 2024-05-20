@@ -71,10 +71,22 @@ namespace MDP.BlazorCore
             var instance = serviceProvider.GetService(_method.DeclaringType);
             if (instance == null) throw new InvalidOperationException($"{nameof(instance)}=null");
 
-            // Parameters
+            // ExecuteMethod
+            var result = MDP.Reflection.Activator.ExecuteMethod(instance, _method.Name, new InteropParameterProvider());
+            if (result is Task task)
+            {
+                if (task.GetType().IsGenericType == false)
+                {
+                    return task.ContinueWith(o => (object)null);
+                }
+                else
+                {
+                    return task.ContinueWith(o => (object)(task.GetType().GetProperty("Result").GetValue(o)));
+                }
+            }
 
             // Return
-            return Task.FromResult(JsonSerializer.Serialize(payload) as object);
+            return Task.FromResult(result);
         }
     }
 }

@@ -33,7 +33,7 @@
                     "/Sites/User/FindById",
                     pageData.b
                 ).then(result => {
-                    alert(result);
+                    alert(JSON.stringify(result));
                 }).catch(error => {
                     alert("Error calling .NET method: " + error);
                 });

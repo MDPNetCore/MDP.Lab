@@ -26,7 +26,7 @@ namespace MDP.BlazorCore.Lab
         public class FindByIdResultModel
         {
             // Properties
-            
+            public string UserId { get; set; } = "U0001";
         }
     }
 }
