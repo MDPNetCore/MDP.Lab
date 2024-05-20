@@ -43,12 +43,12 @@ namespace MDP.BlazorCore.Authorization.Maui
             });
 
             // RoleAuthorizationHandler
-            serviceCollection.AddSingleton<IAuthorizationHandler, RoleAuthorizationHandler>();
+            serviceCollection.AddScoped<IAuthorizationHandler, RoleAuthorizationHandler>();
 
             // RoleAssignmentProvider
 
             // AccessPermissionProvider
-            serviceCollection.AddSingleton<IAccessPermissionProvider>(serviceProvider =>
+            serviceCollection.AddTransient<IAccessPermissionProvider>(serviceProvider =>
             {
                 // AccessPermissionList
                 var accessPermissionList = setting.Permissions?.Select(o => o.ToPermission()).ToList();
