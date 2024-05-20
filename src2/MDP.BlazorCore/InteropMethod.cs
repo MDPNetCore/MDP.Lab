@@ -57,12 +57,12 @@ namespace MDP.BlazorCore
             return false;
         }
 
-        public Task<object> InvokeAsync(string path, JsonDocument parameters, IServiceProvider serviceProvider)
+        public Task<object> InvokeAsync(string path, JsonDocument payload, IServiceProvider serviceProvider)
         {
             #region Contracts
 
             ArgumentNullException.ThrowIfNullOrEmpty(path);
-            ArgumentNullException.ThrowIfNull(parameters);
+            ArgumentNullException.ThrowIfNull(payload);
             ArgumentNullException.ThrowIfNull(serviceProvider);
 
             #endregion
@@ -74,7 +74,7 @@ namespace MDP.BlazorCore
             // Parameters
 
             // Return
-            return Task.FromResult(JsonSerializer.Serialize(parameters) as object);
+            return Task.FromResult(JsonSerializer.Serialize(payload) as object);
         }
     }
 }

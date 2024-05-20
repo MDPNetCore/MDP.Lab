@@ -31,12 +31,12 @@ namespace MDP.BlazorCore
 
 
         // Methods
-        public Task<object> InvokeAsync(string path, JsonDocument parameters, IServiceProvider serviceProvider)
+        public Task<object> InvokeAsync(string path, JsonDocument payload, IServiceProvider serviceProvider)
         {
             #region Contracts
 
             ArgumentNullException.ThrowIfNullOrEmpty(path);
-            ArgumentNullException.ThrowIfNull(parameters);
+            ArgumentNullException.ThrowIfNull(payload);
             ArgumentNullException.ThrowIfNull(serviceProvider);
 
             #endregion
@@ -50,7 +50,7 @@ namespace MDP.BlazorCore
             if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
 
             // Return
-            return interopMethod.InvokeAsync(path, parameters, serviceProvider);
+            return interopMethod.InvokeAsync(path, payload, serviceProvider);
         }
 
         private InteropMethod FindInteropMethod(string path)

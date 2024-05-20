@@ -46,17 +46,17 @@
 
     // Methods
     [JSInvokable]
-    public Task<object> InvokeAsync(string path, JsonDocument parameters)
+    public Task<object> InvokeAsync(string path, JsonDocument payload)
     {
         #region Contracts
 
         ArgumentNullException.ThrowIfNullOrEmpty(path);
-        ArgumentNullException.ThrowIfNull(parameters);
+        ArgumentNullException.ThrowIfNull(payload);
 
         #endregion
         
         // Return
-        return _interopManager?.InvokeAsync(path, parameters, _serviceProvider);
+        return _interopManager?.InvokeAsync(path, payload, _serviceProvider);
     }
 }
 
