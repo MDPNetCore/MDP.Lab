@@ -65,7 +65,7 @@ namespace MDP.BlazorCore.Maui
                     applicationBuilder.Logging.AddDebug();
                 }
 
-                // MauiApp
+                // BlazorApp
                 applicationBuilder.UseMauiApp<MDP.BlazorCore.Maui.App>();
                 applicationBuilder.Services.AddMauiBlazorWebView();
                 applicationBuilder.Services.AddAuthorizationCore();
@@ -78,6 +78,8 @@ namespace MDP.BlazorCore.Maui
                         DefaultLayout = defaultLayout
                     };
                 });
+
+                // InteropService
 
                 // AuthenticationStateProvider
                 applicationBuilder.Services.AddSingleton<AuthenticationStateProvider, MauiAuthenticationStateProvider>();
