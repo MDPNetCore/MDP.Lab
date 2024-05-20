@@ -43,7 +43,7 @@ namespace MDP.BlazorCore.Authorization.Maui
             });
 
             // RoleAuthorizationHandler
-            serviceCollection.AddScoped<IAuthorizationHandler, RoleAuthorizationHandler>();
+            serviceCollection.AddSingleton<IAuthorizationHandler, RoleAuthorizationHandler>();
 
             // RoleAssignmentProvider
 
