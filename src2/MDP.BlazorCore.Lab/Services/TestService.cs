@@ -11,8 +11,8 @@ namespace MDP.BlazorCore.Lab
     {
         // Methods
         [AllowAnonymous]
-        [InteropRoute("test")]
-        public async Task<TestResultModel> Test(TestActionModel actionModel)
+        [InteropRoute("Sites/{companyId}/Test/Action1")]
+        public async Task<TestResultModel> Action1(TestActionModel actionModel)
         {
             return await Task.FromResult(new TestResultModel());
         }
