@@ -13,8 +13,8 @@ namespace MDP.BlazorCore.Authentication.Maui
 
 
         // Methods
-        Task LoginAsync(string returnUrl = null);
+        Task LoginAsync();
 
-        Task LogoutAsync(string returnUrl = null);
+        Task LogoutAsync();
     }
 }

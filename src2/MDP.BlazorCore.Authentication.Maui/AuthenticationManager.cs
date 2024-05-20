@@ -30,7 +30,7 @@ namespace MDP.BlazorCore.Authentication.Maui
 
 
         // Methods
-        public Task LoginAsync(string scheme = null, string returnUrl = null)
+        public Task LoginAsync(string scheme = null)
         {
             // AuthenticationProvider
             IAuthenticationProvider authenticationProvider = null;
@@ -45,10 +45,10 @@ namespace MDP.BlazorCore.Authentication.Maui
             if (authenticationProvider == null) throw new InvalidOperationException($"{nameof(authenticationProvider)}=null");
 
             // LoginAsync
-            return authenticationProvider.LoginAsync(returnUrl);
+            return authenticationProvider.LoginAsync();
         }
 
-        public Task LogoutAsync(string scheme = null, string returnUrl = null)
+        public Task LogoutAsync(string scheme = null)
         {
             // AuthenticationProvider
             IAuthenticationProvider authenticationProvider = null;
@@ -63,7 +63,7 @@ namespace MDP.BlazorCore.Authentication.Maui
             if (authenticationProvider == null) throw new InvalidOperationException($"{nameof(authenticationProvider)}=null");
 
             // LogoutAsync
-            return authenticationProvider.LogoutAsync(returnUrl);
+            return authenticationProvider.LogoutAsync();
         }
     }
 }
