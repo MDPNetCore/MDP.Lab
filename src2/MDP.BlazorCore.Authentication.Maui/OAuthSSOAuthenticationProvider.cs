@@ -4,13 +4,16 @@ using System;
 using System.Threading.Tasks;
 using MDP.BlazorCore.Maui;
 using System.Security.Claims;
+using Microsoft.Extensions.Hosting;
 
 namespace MDP.BlazorCore.Authentication.Maui
 {
     public class OAuthSSOAuthenticationProvider : IAuthenticationProvider
     {
         // Fields
-        private readonly OAuthSSOHandler _authHandler = null;
+        private readonly OAuthSSOOptions _authOptions = null;
+
+        private readonly IHostEnvironment _hostEnvironment = null;
 
         private readonly UserManager _userManager = null;
 
@@ -18,27 +21,27 @@ namespace MDP.BlazorCore.Authentication.Maui
 
 
         // Constructors
-        public OAuthSSOAuthenticationProvider(OAuthSSOHandler authHandler, UserManager userManager, NavigationManager navigationManager)
+        public OAuthSSOAuthenticationProvider(OAuthSSOOptions authOptions, IHostEnvironment hostEnvironment, UserManager userManager, NavigationManager navigationManager)
         {
             #region Contracts
 
-            if (authHandler == null) throw new ArgumentException($"{nameof(authHandler)}=null");
+            if (authOptions == null) throw new ArgumentException($"{nameof(authOptions)}=null");
+            if (hostEnvironment == null) throw new ArgumentException($"{nameof(hostEnvironment)}=null");
             if (userManager == null) throw new ArgumentException($"{nameof(userManager)}=null");
             if (navigationManager == null) throw new ArgumentException($"{nameof(navigationManager)}=null");
 
             #endregion
 
             // Default
-            _authHandler = authHandler;
+            _authOptions = authOptions;
+            _hostEnvironment = hostEnvironment;
             _userManager = userManager;
             _navigationManager = navigationManager;
         }
 
-        public void Dispose()
-        {
-            // OAuthSSOHandler
-            _authHandler.Dispose();
-        }
+
+        // Properties
+        public string Name { get; private set; } = "OAuthSSO";
 
 
         // Methods
@@ -47,21 +50,25 @@ namespace MDP.BlazorCore.Authentication.Maui
             // Require
             if (string.IsNullOrEmpty(returnUrl) == true) returnUrl = "/";
 
-            // AuthenticateToken
-            var authenticateToken = await _authHandler.AuthenticateAsync();
-            if (string.IsNullOrEmpty(authenticateToken) == true) throw new InvalidOperationException($"{nameof(authenticateToken)}=null");
+            // AuthHandler
+            using(var authHandler = new OAuthSSOHandler(_authOptions, _hostEnvironment))
+            {
+                // AuthenticateToken
+                var authenticateToken = await authHandler.AuthenticateAsync();
+                if (string.IsNullOrEmpty(authenticateToken) == true) throw new InvalidOperationException($"{nameof(authenticateToken)}=null");
 
-            // AccessToken
-            var accessToken = await _authHandler.GetAccessTokenAsync(authenticateToken);
-            if (string.IsNullOrEmpty(accessToken) == true) throw new InvalidOperationException($"{nameof(accessToken)}=null");
+                // AccessToken
+                var accessToken = await authHandler.GetAccessTokenAsync(authenticateToken);
+                if (string.IsNullOrEmpty(accessToken) == true) throw new InvalidOperationException($"{nameof(accessToken)}=null");
 
-            // ClaimsIdentity
-            var claimsIdentity = await _authHandler.GetUserInformationAsync(authenticateToken);
-            if (claimsIdentity == null) throw new InvalidOperationException($"{nameof(claimsIdentity)}=null");
-            await _userManager.SignInAsync(new ClaimsPrincipal(claimsIdentity));
+                // ClaimsIdentity
+                var claimsIdentity = await authHandler.GetUserInformationAsync(authenticateToken);
+                if (claimsIdentity == null) throw new InvalidOperationException($"{nameof(claimsIdentity)}=null");
+                await _userManager.SignInAsync(new ClaimsPrincipal(claimsIdentity));
 
-            // Redirect
-            _navigationManager.NavigateTo(returnUrl);
+                // Redirect
+                _navigationManager.NavigateTo(returnUrl);
+            }
         }
 
         public async Task LogoutAsync(string returnUrl = null)
@@ -69,15 +76,19 @@ namespace MDP.BlazorCore.Authentication.Maui
             // Require
             if (string.IsNullOrEmpty(returnUrl) == true) returnUrl = "/";
 
-            // AuthenticateToken
-            
-            // AccessToken
+            // AuthHandler
+            using (var authHandler = new OAuthSSOHandler(_authOptions, _hostEnvironment))
+            {
+                // AuthenticateToken
 
-            // ClaimsIdentity
-            await _userManager.SignOutAsync();
+                // AccessToken
 
-            // Redirect
-            _navigationManager.NavigateTo(returnUrl);
+                // ClaimsIdentity
+                await _userManager.SignOutAsync();
+
+                // Redirect
+                _navigationManager.NavigateTo(returnUrl);
+            }
         }
     }
 }
