@@ -12,58 +12,72 @@ namespace MDP.BlazorCore.Authentication.Maui
     public class AuthenticationManager
     {
         // Fields
-        private readonly IList<IAuthenticationProvider> _authenticationProviderList = null;
+        private readonly IList<IAuthenticationProviderBuilder> _authenticationProviderBuilderList = null;
 
 
         // Constructors
-        public AuthenticationManager(IList<IAuthenticationProvider> authenticationProviderList)
+        public AuthenticationManager(IList<IAuthenticationProviderBuilder> authenticationProviderBuilderList)
         {
             #region Contracts
 
-            if (authenticationProviderList == null) throw new ArgumentException($"{nameof(authenticationProviderList)}=null");
+            if (authenticationProviderBuilderList == null) throw new ArgumentException($"{nameof(authenticationProviderBuilderList)}=null");
 
             #endregion
 
             // Default
-            _authenticationProviderList = authenticationProviderList;
+            _authenticationProviderBuilderList = authenticationProviderBuilderList;
         }
 
 
         // Methods
         public Task LoginAsync(string scheme = null, string returnUrl = null)
         {
-            // AuthenticationProvider
-            IAuthenticationProvider authenticationProvider = null;
+            // AuthenticationProviderBuilder
+            IAuthenticationProviderBuilder authenticationProviderBuilder = null;
             if (string.IsNullOrEmpty(scheme) == true)
             {
-                authenticationProvider = _authenticationProviderList.FirstOrDefault();
+                authenticationProviderBuilder = _authenticationProviderBuilderList.FirstOrDefault();
             }
             else
             {
-                authenticationProvider = _authenticationProviderList.FirstOrDefault(e => e.Name == scheme);
+                authenticationProviderBuilder = _authenticationProviderBuilderList.FirstOrDefault(e => e.Name == scheme);
             }
-            if (authenticationProvider == null) throw new InvalidOperationException($"{nameof(authenticationProvider)}=null");
+            if (authenticationProviderBuilder == null) throw new InvalidOperationException($"{nameof(authenticationProviderBuilder)}=null");
 
-            // LoginAsync
-            return authenticationProvider.LoginAsync(returnUrl);
+            // AuthenticationProvider
+            using (var authenticationProvider = authenticationProviderBuilder.BuildProvider())
+            {
+                // Require
+                if (authenticationProvider == null) throw new InvalidOperationException($"{nameof(authenticationProvider)}=null");
+
+                // LoginAsync
+                return authenticationProvider.LoginAsync(returnUrl);
+            }           
         }
 
         public Task LogoutAsync(string scheme = null, string returnUrl = null)
         {
-            // AuthenticationProvider
-            IAuthenticationProvider authenticationProvider = null;
+            // AuthenticationProviderBuilder
+            IAuthenticationProviderBuilder authenticationProviderBuilder = null;
             if (string.IsNullOrEmpty(scheme) == true)
             {
-                authenticationProvider = _authenticationProviderList.FirstOrDefault();
+                authenticationProviderBuilder = _authenticationProviderBuilderList.FirstOrDefault();
             }
             else
             {
-                authenticationProvider = _authenticationProviderList.FirstOrDefault(e => e.Name == scheme);
+                authenticationProviderBuilder = _authenticationProviderBuilderList.FirstOrDefault(e => e.Name == scheme);
             }
-            if (authenticationProvider == null) throw new InvalidOperationException($"{nameof(authenticationProvider)}=null");
+            if (authenticationProviderBuilder == null) throw new InvalidOperationException($"{nameof(authenticationProviderBuilder)}=null");
 
-            // LogoutAsync
-            return authenticationProvider.LogoutAsync(returnUrl);
+            // AuthenticationProvider
+            using (var authenticationProvider = authenticationProviderBuilder.BuildProvider())
+            {
+                // Require
+                if (authenticationProvider == null) throw new InvalidOperationException($"{nameof(authenticationProvider)}=null");
+
+                // LogoutAsync
+                return authenticationProvider.LogoutAsync(returnUrl);
+            }
         }
     }
 }

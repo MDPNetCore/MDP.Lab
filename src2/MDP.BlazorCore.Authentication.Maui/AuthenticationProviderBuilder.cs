@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace MDP.BlazorCore.Authentication.Maui
 {
-    public interface IAuthenticationProvider : IDisposable
+    public interface IAuthenticationProviderBuilder
     {
-        // Methods
-        Task LoginAsync(string returnUrl = null);
+        // Properties
+        string Name { get; }
 
-        Task LogoutAsync(string returnUrl = null);
+
+        // Methods
+        IAuthenticationProvider BuildProvider();
     }
 }
