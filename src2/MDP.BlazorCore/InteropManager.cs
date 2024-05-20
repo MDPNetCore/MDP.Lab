@@ -31,7 +31,7 @@ namespace MDP.BlazorCore
 
 
         // Methods
-        public Task<object> InvokeMethodAsync(string path, JsonDocument parameters, IServiceProvider serviceProvider)
+        public Task<object> InvokeAsync(string path, JsonDocument parameters, IServiceProvider serviceProvider)
         {
             #region Contracts
 
@@ -41,8 +41,43 @@ namespace MDP.BlazorCore
 
             #endregion
 
+            // Path
+            if (path.StartsWith("/") == false) path = "/" + path;
+            if (path.EndsWith("/") == true) path = path.TrimEnd('/');
+
+            // InteropMethod
+            var interopMethod = this.FindInteropMethod(path);
+            if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
+
             // Return
-            return Task.FromResult(JsonSerializer.Serialize(parameters) as object);
+            return interopMethod.InvokeAsync(path, parameters, serviceProvider);
+        }
+
+        private InteropMethod FindInteropMethod(string path)
+        {
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNullOrEmpty(path);
+
+            #endregion
+
+            // Result
+            InteropMethod interopMethod = null;
+
+            // FindByPath
+            if (_interopMethodDictionary.TryGetValue(path, out interopMethod) == true) return interopMethod;
+
+            // PathSectionList
+            var pathSectionList = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (pathSectionList == null) throw new InvalidOperationException($"{nameof(pathSectionList)}=null");
+            if (pathSectionList.Count == 0) throw new InvalidOperationException($"{nameof(pathSectionList)}.Count=0");
+
+            // FindByPathSectionList
+            interopMethod = _interopMethodDictionary.Values.FirstOrDefault(interopMethod => interopMethod.CanInvoke(pathSectionList) == true);
+            if (interopMethod != null) return interopMethod;
+
+            // Return
+            return null;
         }
     }
 }

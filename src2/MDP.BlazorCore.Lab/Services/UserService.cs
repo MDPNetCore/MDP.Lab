@@ -7,26 +7,26 @@ using System.Threading.Tasks;
 
 namespace MDP.BlazorCore.Lab
 {
-    public class TestService : InteropService
+    public class UserService : InteropService
     {
         // Methods
         [AllowAnonymous]
-        [InteropRoute("Sites/{companyId}/Test/Action1")]
-        public async Task<TestResultModel> Action1(TestActionModel actionModel)
+        [InteropRoute("/Sites/User/FindById")]
+        public async Task<FindByIdResultModel> FindById(FindByIdActionModel actionModel)
         {
-            return await Task.FromResult(new TestResultModel());
+            return await Task.FromResult(new FindByIdResultModel());
         }
 
-        public class TestActionModel
+        public class FindByIdActionModel
         {
             // Properties
 
         }
 
-        public class TestResultModel
+        public class FindByIdResultModel
         {
             // Properties
-
+            
         }
     }
 }

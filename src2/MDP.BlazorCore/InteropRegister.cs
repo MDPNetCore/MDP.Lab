@@ -46,16 +46,19 @@ namespace MDP.BlazorCore
                 serviceCollection.AddScoped(interopServiceType);
 
                 // RegisterMethod
-                var interopMethodList = interopServiceType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-                foreach (var interopMethod in interopMethodList)
+                var methodList = interopServiceType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var method in methodList)
                 {
-                    // RouteAttribute
-                    var routeAttribute = interopMethod.GetCustomAttribute<InteropRouteAttribute>();
+                    // InteropRoute
+                    var routeAttribute = method.GetCustomAttribute<InteropRouteAttribute>();
                     if (routeAttribute == null) continue;
-                    if (interopMethodDictionary.ContainsKey(routeAttribute.Template) == true) throw new InvalidOperationException($"Duplicate route detected: {routeAttribute.Template}");
+
+                    // InteropMethod
+                    var interopMethod = new InteropMethod(routeAttribute.Template, method);
+                    if (interopMethodDictionary.ContainsKey(interopMethod.Template) == true) throw new InvalidOperationException($"Duplicate route detected: {interopMethod.Template}");
 
                     // Add
-                    interopMethodDictionary.Add(routeAttribute.Template, new InteropMethod(routeAttribute.Template, interopMethod));
+                    interopMethodDictionary.Add(interopMethod.Template, interopMethod);
                 }
             }
 

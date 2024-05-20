@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MDP.BlazorCore
@@ -27,20 +28,53 @@ namespace MDP.BlazorCore
 
             #endregion
 
-            // Default
+            // Template
+            if (template.StartsWith("/") == false) template = "/" + template;
+            if (template.EndsWith("/") == true) template = template.TrimEnd('/');
             _template = template;
-            _method = method;
 
+            // Method
+            _method = method;
+            
             // TemplateSectionList
             _templateSectionList = template.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
 
+        // Properties
+        public string Template { get { return _template; } }
+
+
         // Methods
-        public bool CanInvoke(string path, out Dictionary<string, string> pathParameters)
+        public bool CanInvoke(List<string> pathSectionList)
         {
-            pathParameters = null;
-            return true;
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNull(pathSectionList);
+
+            #endregion
+
+            return false;
+        }
+
+        public Task<object> InvokeAsync(string path, JsonDocument parameters, IServiceProvider serviceProvider)
+        {
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNullOrEmpty(path);
+            ArgumentNullException.ThrowIfNull(parameters);
+            ArgumentNullException.ThrowIfNull(serviceProvider);
+
+            #endregion
+
+            // Instance
+            var instance = serviceProvider.GetService(_method.DeclaringType);
+            if (instance == null) throw new InvalidOperationException($"{nameof(instance)}=null");
+
+            // Parameters
+
+            // Return
+            return Task.FromResult(JsonSerializer.Serialize(parameters) as object);
         }
     }
 }

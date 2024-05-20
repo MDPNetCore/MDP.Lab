@@ -29,8 +29,8 @@
             document.getElementById("runDotNetButton").addEventListener("click", function (event) {
 
                 // invokeMethod
-                mdp.blazor.interopManager.invokeMethodAsync(
-                    "aaa",
+                mdp.blazor.interopManager.invokeAsync(
+                    "/Sites/User/FindById",
                     pageData.b
                 ).then(result => {
                     alert(result);

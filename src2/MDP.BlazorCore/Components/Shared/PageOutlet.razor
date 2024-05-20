@@ -20,7 +20,7 @@
     [Inject]
     public InteropManager _interopManager { get; set; }
 
-    private DotNetObjectReference<PageOutlet> _interopReference = null;
+    private DotNetObjectReference<PageOutlet> _interopGateway = null;
 
 
     // Constructors        
@@ -29,24 +29,24 @@
         // Require
         if (firstRender == false) return;
 
-        // InteropReference
-        _interopReference = DotNetObjectReference.Create(this);
-        if (_interopReference == null) throw new InvalidOperationException($"{nameof(_interopReference)}=null");
+        // InteropGateway
+        _interopGateway = DotNetObjectReference.Create(this);
+        if (_interopGateway == null) throw new InvalidOperationException($"{nameof(_interopGateway)}=null");
 
         // Initialize
-        await _jsRuntime.InvokeVoidAsync("mdp.blazor.interopManager.initialize", _interopReference);
+        await _jsRuntime.InvokeVoidAsync("mdp.blazor.interopManager.initialize", _interopGateway);
     }
 
     public void Dispose()
     {
         // InteropReference
-        _interopReference?.Dispose();
+        _interopGateway?.Dispose();
     }
 
 
     // Methods
     [JSInvokable]
-    public Task<object> InvokeMethodAsync(string path, JsonDocument parameters)
+    public Task<object> InvokeAsync(string path, JsonDocument parameters)
     {
         #region Contracts
 
@@ -56,7 +56,7 @@
         #endregion
         
         // Return
-        return _interopManager.InvokeMethodAsync(path, parameters, _serviceProvider);
+        return _interopManager?.InvokeAsync(path, parameters, _serviceProvider);
     }
 }
 
