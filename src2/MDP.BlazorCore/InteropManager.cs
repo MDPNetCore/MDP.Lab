@@ -11,17 +11,17 @@ namespace MDP.BlazorCore
     public class InteropManager
     {
         // Methods
-        public Task<object> InvokeMethodAsync(string path, JsonDocument arguments)
+        public Task<object> InvokeMethodAsync(string path, JsonDocument parameters)
         {
             #region Contracts
 
             ArgumentNullException.ThrowIfNullOrEmpty(path);
-            ArgumentNullException.ThrowIfNull(arguments);
+            ArgumentNullException.ThrowIfNull(parameters);
 
             #endregion
 
             // Return
-            return Task.FromResult(JsonSerializer.Serialize(arguments) as object);
+            return Task.FromResult(JsonSerializer.Serialize(parameters) as object);
         }
     }
 }

@@ -51,11 +51,11 @@ mdp.blazor.interopManager = (function () {
         _interopComponent = interopComponent;
     }
 
-    function invokeMethodAsync(path, arguments) {
+    function invokeMethodAsync(path, parameters) {
 
         // invoke
         if (_interopComponent) {
-            return _interopComponent.invokeMethodAsync("InvokeMethodAsync", path, arguments);
+            return _interopComponent.invokeMethodAsync("InvokeMethodAsync", path, parameters);
         } else {
             alert("DotNet reference not initialized.");
         }
