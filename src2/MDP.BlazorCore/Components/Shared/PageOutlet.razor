@@ -15,7 +15,7 @@
     public IJSRuntime _jsRuntime { get; set; }
 
     [Inject]
-    public IServiceProvider _serviceProvider { get; set; }
+    public InteropManager _interopManager { get; set; }
 
     private DotNetObjectReference<PageOutlet> _interopReference = null;
 
@@ -43,10 +43,17 @@
 
     // Methods
     [JSInvokable]
-    public Task<string> InvokeMethodAsync(JsonDocument arguments)
-    {       
+    public Task<object> InvokeMethodAsync(string path, JsonDocument arguments)
+    {
+        #region Contracts
+
+        ArgumentNullException.ThrowIfNullOrEmpty(path);
+        ArgumentNullException.ThrowIfNull(arguments);
+
+        #endregion
+
         // Return
-        return Task.FromResult(JsonSerializer.Serialize(arguments));
+        return _interopManager.InvokeMethodAsync(path, arguments);
     }
 }
 

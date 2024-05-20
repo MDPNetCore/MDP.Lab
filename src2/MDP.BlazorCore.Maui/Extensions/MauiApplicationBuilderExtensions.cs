@@ -84,6 +84,9 @@ namespace MDP.BlazorCore.Maui
 
                 // UserManager
                 applicationBuilder.Services.AddSingleton<UserManager, UserManager>();
+
+                // InteropManager
+                applicationBuilder.Services.AddSingleton<InteropManager, InteropManager>();
             }
 
             // Return
