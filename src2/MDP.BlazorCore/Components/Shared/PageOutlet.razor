@@ -15,6 +15,9 @@
     public IJSRuntime _jsRuntime { get; set; }
 
     [Inject]
+    public IServiceProvider _serviceProvider { get; set; }
+
+    [Inject]
     public InteropManager _interopManager { get; set; }
 
     private DotNetObjectReference<PageOutlet> _interopReference = null;
@@ -51,9 +54,9 @@
         ArgumentNullException.ThrowIfNull(parameters);
 
         #endregion
-
+        
         // Return
-        return _interopManager.InvokeMethodAsync(path, parameters);
+        return _interopManager.InvokeMethodAsync(path, parameters, _serviceProvider);
     }
 }
 

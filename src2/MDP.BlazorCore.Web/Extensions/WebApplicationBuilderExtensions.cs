@@ -69,8 +69,8 @@ namespace MDP.BlazorCore.Web
                     };
                 });
 
-                // InteropService
-
+                // InteropManager
+                applicationBuilder.Services.AddInteropManager();
             }
 
             // MiddlewareBuilder

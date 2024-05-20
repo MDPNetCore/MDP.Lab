@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MDP.BlazorCore
 {
-    public class InteropService
+    public abstract class InteropService
     {
 
     }
