@@ -45,6 +45,13 @@ namespace MDP.BlazorCore.Web
 
             #endregion
 
+            // RootUrl
+            var rootUrl = $"{this.HttpContext.Request.Scheme}://{this.HttpContext.Request.Host}{this.HttpContext.Request.PathBase}";
+            var interopUrl = new Uri(new Uri(rootUrl), actionModel.Path);
+
+            // InteropRequest
+            var interopRequest = new InteropRequest(interopUrl, actionModel.Payload, this.User, _serviceProvider); 
+
             // InvokeAsync
             return _interopManager.InvokeAsync(actionModel.Path, actionModel.Payload, _serviceProvider);
         }

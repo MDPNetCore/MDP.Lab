@@ -60,6 +60,36 @@ namespace MDP.BlazorCore
             return interopMethod.InvokeAsync(pathSectionList, payload, serviceProvider);
         }
 
+        public Task<object> InvokeAsync(InteropRequest interopRequest)
+        {
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNull(interopRequest);
+
+            #endregion
+
+            // Path
+            var path = interopRequest.Url.AbsolutePath; 
+            if (path.StartsWith("/") == false) path = "/" + path;
+            if (path.EndsWith("/") == true) path = path.TrimEnd('/');
+            if (string.IsNullOrEmpty(path) == true) throw new InvalidOperationException($"{nameof(path)}=null");
+
+            // PathSectionList
+            var pathSectionList = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (pathSectionList == null) throw new InvalidOperationException($"{nameof(pathSectionList)}=null");
+            if (pathSectionList.Count == 0) throw new InvalidOperationException($"{nameof(pathSectionList)}.Count=0");
+
+            // InteropMethod
+            InteropMethod interopMethod = null;
+            if (interopMethod == null) interopMethod = this.FindInteropMethod(path);
+            if (interopMethod == null) interopMethod = this.FindInteropMethod(pathSectionList);
+            if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
+
+            // Return
+            return interopMethod.InvokeAsync(pathSectionList, interopRequest.Payload, interopRequest.ServiceProvider);
+        }
+
+
         private InteropMethod FindInteropMethod(string path)
         {
             #region Contracts
