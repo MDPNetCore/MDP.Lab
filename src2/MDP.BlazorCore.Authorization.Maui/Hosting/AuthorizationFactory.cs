@@ -11,7 +11,7 @@ namespace MDP.BlazorCore.Authorization.Maui
     public class AuthorizationFactory : ServiceFactory<IServiceCollection, AuthorizationFactory.Setting>
     {
         // Constructors
-        public AuthorizationFactory() : base("Authorization.Blazor", null, true) { }
+        public AuthorizationFactory() : base("Authorization", null, true) { }
 
 
         // Methods
@@ -44,7 +44,7 @@ namespace MDP.BlazorCore.Authorization.Maui
             });
 
             // RoleAuthorizationHandler
-            serviceCollection.AddScoped<IAuthorizationHandler, RoleAuthorizationHandler>();
+            serviceCollection.AddSingleton<IAuthorizationHandler, RoleAuthorizationHandler>();
 
             // RoleAssignmentProvider
 
