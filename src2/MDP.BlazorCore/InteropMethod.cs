@@ -72,21 +72,11 @@ namespace MDP.BlazorCore
             if (instance == null) throw new InvalidOperationException($"{nameof(instance)}=null");
 
             // ExecuteMethod
-            var result = MDP.Reflection.Activator.ExecuteMethod(instance, _method.Name, new InteropParameterProvider());
-            if (result is Task task)
-            {
-                if (task.GetType().IsGenericType == false)
-                {
-                    return task.ContinueWith(o => (object)null);
-                }
-                else
-                {
-                    return task.ContinueWith(o => (object)(task.GetType().GetProperty("Result").GetValue(o)));
-                }
-            }
+            var result = MDP.Reflection.Activator.InvokeMethodAsync(instance, _method.Name, new InteropParameterProvider());
+            if (result == null) throw new InvalidOperationException($"{nameof(instance)}=null");
 
             // Return
-            return Task.FromResult(result);
+            return result;
         }
     }
 }
