@@ -57,11 +57,11 @@ namespace MDP.BlazorCore
             return false;
         }
 
-        public Task<object> InvokeAsync(string path, JsonDocument payload, IServiceProvider serviceProvider)
+        public Task<object> InvokeAsync(List<string> pathSectionList, JsonDocument payload, IServiceProvider serviceProvider)
         {
             #region Contracts
 
-            ArgumentNullException.ThrowIfNullOrEmpty(path);
+            ArgumentNullException.ThrowIfNull(pathSectionList);
             ArgumentNullException.ThrowIfNull(payload);
             ArgumentNullException.ThrowIfNull(serviceProvider);
 

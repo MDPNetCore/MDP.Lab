@@ -45,12 +45,19 @@ namespace MDP.BlazorCore
             if (path.StartsWith("/") == false) path = "/" + path;
             if (path.EndsWith("/") == true) path = path.TrimEnd('/');
 
+            // PathSectionList
+            var pathSectionList = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (pathSectionList == null) throw new InvalidOperationException($"{nameof(pathSectionList)}=null");
+            if (pathSectionList.Count == 0) throw new InvalidOperationException($"{nameof(pathSectionList)}.Count=0");
+
             // InteropMethod
-            var interopMethod = this.FindInteropMethod(path);
+            InteropMethod interopMethod = null;
+            if (interopMethod == null) interopMethod = this.FindInteropMethod(path);
+            if (interopMethod == null) interopMethod = this.FindInteropMethod(pathSectionList);
             if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
 
             // Return
-            return interopMethod.InvokeAsync(path, payload, serviceProvider);
+            return interopMethod.InvokeAsync(pathSectionList, payload, serviceProvider);
         }
 
         private InteropMethod FindInteropMethod(string path)
@@ -67,10 +74,20 @@ namespace MDP.BlazorCore
             // FindByPath
             if (_interopMethodDictionary.TryGetValue(path, out interopMethod) == true) return interopMethod;
 
-            // PathSectionList
-            var pathSectionList = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            if (pathSectionList == null) throw new InvalidOperationException($"{nameof(pathSectionList)}=null");
-            if (pathSectionList.Count == 0) throw new InvalidOperationException($"{nameof(pathSectionList)}.Count=0");
+            // Return
+            return null;
+        }
+
+        private InteropMethod FindInteropMethod(List<string> pathSectionList)
+        {
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNull(pathSectionList);
+
+            #endregion
+
+            // Result
+            InteropMethod interopMethod = null;
 
             // FindByPathSectionList
             interopMethod = _interopMethodDictionary.Values.FirstOrDefault(interopMethod => interopMethod.CanInvoke(pathSectionList) == true);
