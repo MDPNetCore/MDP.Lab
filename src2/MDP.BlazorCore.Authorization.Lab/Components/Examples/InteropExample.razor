@@ -1,0 +1,45 @@
+﻿@page "/InteropExample"
+@code {
+       
+}
+
+
+<PageScript>
+    <script>
+
+        // blazorPageLoaded
+        document.addEventListener("BlazorPageLoaded", function (event) {
+
+            // runDotNetButton
+            document.getElementById("runDotNetButton").addEventListener("click", function (event) {
+
+                // invokeMethod
+                mdp.blazor.interopManager.invokeAsync("/T0001/User/FindByTenantId", {
+                    "user": {
+                        "userId": "U0001",
+                        "name": "Clark"
+                    }
+                }).then(result => {
+                    alert(JSON.stringify(result));
+                }).catch(error => {
+                    alert("Error calling .NET method: " + JSON.stringify(error));
+                });
+            });
+
+            // message
+            document.getElementById("message").innerHTML += "BlazorPageLoaded";
+        }, { once: true });
+    </script>
+</PageScript>
+
+
+<!-- title -->
+<h3>InteropExample</h3>
+<hr />
+
+<!-- Interop -->
+<button class="btn btn-primary" id="runDotNetButton">Run .NET</button><br />
+<br />
+
+<p id="message"></p><br />
+<br />
