@@ -27,6 +27,9 @@ namespace MDP.BlazorCore
             this.Payload = payload;
             this.User = user;
             this.ServiceProvider = serviceProvider;
+
+            // Resource
+            this.Resource = new InteropResource(url);
         }
 
 
@@ -38,5 +41,7 @@ namespace MDP.BlazorCore
         public ClaimsPrincipal User { get; private set; }
 
         public IServiceProvider ServiceProvider { get; private set; }
+
+        public InteropResource Resource { get; private set; }
     }
 }

@@ -68,7 +68,7 @@ namespace MDP.BlazorCore
             if (authorizationService == null) throw new InvalidOperationException($"{nameof(authorizationService)}=null");
 
             // AuthorizationResult
-            var authorizationResult = await authorizationService.AuthorizeAsync(interopRequest.User, null, _authorizationPolicy);
+            var authorizationResult = await authorizationService.AuthorizeAsync(interopRequest.User, interopRequest.Resource, _authorizationPolicy);
             if (authorizationResult.Succeeded == false) throw new UnauthorizedAccessException($"{nameof(authorizationResult.Succeeded)}=false");
 
             // Return
