@@ -1,33 +1,20 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MDP.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
 using System;
 
 namespace MDP.BlazorCore.Authorization.Maui
 {
     public class BlazorAccessResourceProvider : IAccessResourceProvider
     {
-        // Fields
-        private readonly NavigationManager _navigationManager = null;
-
-
-        // Constructors
-        public BlazorAccessResourceProvider(NavigationManager navigationManager)
-        {
-            #region Contracts
-
-            if (navigationManager == null) throw new ArgumentException($"{nameof(navigationManager)}=null");
-
-            #endregion
-
-            // Default
-            _navigationManager = navigationManager;
-        }
-
-
         // Methods
-        public AccessResource Create()
+        public AccessResource Create(object resource = null)
         {
+            // NavigationManager
+            var navigationManager = resource as NavigationManager;
+            if (navigationManager == null) return null;
+
             // Uri
-            var uriString = _navigationManager.Uri;
+            var uriString = navigationManager.Uri;
             if (string.IsNullOrEmpty(uriString) == true) return null;
             var uri = new Uri(uriString);
 
