@@ -37,7 +37,7 @@
                 }).then(result => {
                     alert(JSON.stringify(result));
                 }).catch(error => {
-                    alert("Error calling .NET method: " + error);
+                    alert("Error calling .NET method: " + JSON.stringify(error));
                 });
             });
 
