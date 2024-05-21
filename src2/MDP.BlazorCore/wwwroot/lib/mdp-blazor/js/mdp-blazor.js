@@ -32,6 +32,8 @@ mdp.blazor.eventManager = (function () {
 
     // return
     return {
+
+        // methods
         dispatchPageLoaded: dispatchPageLoaded
     };
 })();
@@ -68,6 +70,8 @@ mdp.blazor.interopManager = (function () {
 
     // return
     return {
+
+        // methods
         initialize: initialize,
         invokeAsync: invokeAsync
     };
@@ -173,8 +177,6 @@ mdp.blazor.httpClient = (function () {
 
     // return
     return {
-
-        // fields
 
         // methods
         send: send,
