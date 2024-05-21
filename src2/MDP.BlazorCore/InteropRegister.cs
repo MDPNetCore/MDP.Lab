@@ -43,7 +43,7 @@ namespace MDP.BlazorCore
             foreach (var interopHandlerType in interopHandlerTypeList)
             {
                 // RegisterType
-                serviceCollection.AddScoped(interopHandlerType);
+                serviceCollection.AddTransient(interopHandlerType);
 
                 // RegisterMethod
                 var methodList = interopHandlerType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
