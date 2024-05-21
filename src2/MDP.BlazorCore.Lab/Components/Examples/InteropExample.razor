@@ -29,10 +29,12 @@
             document.getElementById("runDotNetButton").addEventListener("click", function (event) {
 
                 // invokeMethod
-                mdp.blazor.interopManager.invokeAsync(
-                    "/Sites/User/FindById",
-                    pageData.b
-                ).then(result => {
+                mdp.blazor.interopManager.invokeAsync("/T0001/User/FindByTenantId", {
+                    "user": {
+                        "userId": "U0001",
+                        "name": "Clark"
+                    }
+                }).then(result => {
                     alert(JSON.stringify(result));
                 }).catch(error => {
                     alert("Error calling .NET method: " + error);

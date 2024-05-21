@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MDP.BlazorCore.Lab.UserHandler;
 
 namespace MDP.BlazorCore.Lab
 {
@@ -11,22 +13,31 @@ namespace MDP.BlazorCore.Lab
     {
         // Methods
         [AllowAnonymous]
-        [InteropRoute("/[TenantId]/User/FindById")]
-        public async Task<FindByIdResultModel> FindById(FindByIdActionModel actionModel)
+        [InteropRoute("/[TenantId]/User/FindByTenantId")]
+        public async Task<User> FindByTenantId(string tenantId, User user)
         {
-            return await Task.FromResult(new FindByIdResultModel());
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNullOrEmpty(tenantId);
+            ArgumentNullException.ThrowIfNull(user);
+
+            #endregion
+
+            // Setting
+            user.TenantId = tenantId;
+
+            // Return
+            return await Task.FromResult(user);
         }
 
-        public class FindByIdActionModel
+        public class User
         {
             // Properties
+            public string TenantId { get; set; } = null;
 
-        }
+            public string UserId { get; set; } = null;
 
-        public class FindByIdResultModel
-        {
-            // Properties
-            public string UserId { get; set; } = "U0001";
+            public string Name { get; set; } = null;
         }
     }
 }

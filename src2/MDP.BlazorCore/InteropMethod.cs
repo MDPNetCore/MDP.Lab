@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -70,7 +71,7 @@ namespace MDP.BlazorCore
                 if (string.IsNullOrEmpty(pathSection) == true) return false;
                 if (string.IsNullOrEmpty(templateSection) == true) return false;
 
-                // [argument]
+                // [Parameter]
                 if (templateSection.StartsWith("[") == true && templateSection.EndsWith("]") == true)
                 {
                     continue;
@@ -84,6 +85,38 @@ namespace MDP.BlazorCore
             return true;
         }
 
+        private Dictionary<string, string> CreateParameterDictionary(List<string> pathSectionList)
+        {
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNull(pathSectionList);
+
+            #endregion
+
+            // ParameterDictionary
+            var parameterDictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < pathSectionList.Count; i++)
+            {
+                // Variables
+                var pathSection = pathSectionList.ElementAtOrDefault(i);
+                var templateSection = _templateSectionList.ElementAtOrDefault(i);
+
+                // Null
+                if (string.IsNullOrEmpty(pathSection) == true) continue;
+                if (string.IsNullOrEmpty(templateSection) == true) continue;
+
+                // [Parameter]
+                if (templateSection.StartsWith("[") == true && templateSection.EndsWith("]") == true)
+                {
+                    // Add
+                    parameterDictionary.Add(templateSection.Substring(1, templateSection.Length - 2), pathSection);
+                }
+            }
+
+            // Return
+            return parameterDictionary;
+        }
+
         public Task<object> InvokeAsync(List<string> pathSectionList, JsonDocument payload, IServiceProvider serviceProvider)
         {
             #region Contracts
@@ -95,7 +128,7 @@ namespace MDP.BlazorCore
             #endregion
 
             // ParameterProvider
-            var parameterProvider = new InteropParameterProvider();
+            var parameterProvider = new InteropParameterProvider(this.CreateParameterDictionary(pathSectionList), payload);
 
             // Instance
             var instance = serviceProvider.GetService(_method.DeclaringType);
