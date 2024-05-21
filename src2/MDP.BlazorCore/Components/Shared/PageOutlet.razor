@@ -52,7 +52,7 @@
 
     // Methods
     [JSInvokable]
-    public Task<object> InvokeAsync(string path, JsonDocument payload)
+    public async Task<object> InvokeAsync(string path, JsonDocument payload)
     {
         #region Contracts
 
@@ -60,9 +60,19 @@
         ArgumentNullException.ThrowIfNull(payload);
 
         #endregion
-        
+
+        // RootUrl
+        var rootUrl = _navigationManager.BaseUri;
+        if (string.IsNullOrEmpty(rootUrl) == true) throw new InvalidOperationException($"{nameof(rootUrl)}=null");
+
         // InvokeAsync
-        return _interopManager?.InvokeAsync(path, payload, _serviceProvider);
+        return _interopManager?.InvokeAsync(new InteropRequest
+        (
+            new Uri(new Uri(rootUrl), path),
+            payload,
+            (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User,
+            _serviceProvider
+        ));
     }
 }
 
