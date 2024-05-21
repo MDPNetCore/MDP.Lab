@@ -53,12 +53,16 @@ mdp.blazor.interopManager = (function () {
 
     function invokeAsync(path, payload) {
 
-        // invoke
+        // localInvoke
         if (_interopComponent) {
             return _interopComponent.invokeMethodAsync("InvokeAsync", path, payload);
-        } else {
-            alert("DotNet reference not initialized.");
-        }
+        } 
+
+        // remoteInvoke
+        return mdp.blazor.httpClient.send("/.blazor/invoke", {
+            "path": path,
+            "payload": payload
+        });
     };
 
 
@@ -66,5 +70,114 @@ mdp.blazor.interopManager = (function () {
     return {
         initialize: initialize,
         invokeAsync: invokeAsync
+    };
+})();
+
+
+// httpClient
+mdp.blazor.httpClient = (function () {
+
+    // methods
+    function send(url, body, headers, method) {
+
+        // headers
+        if (headers == null) headers = {};
+        if (headers["Content-Type"] == null) headers["Content-Type"] = "application/json";
+        if (headers["Accept"] == null) headers["Accept"] = "application/json";
+
+        // method
+        if (method == null) method = "POST";
+
+        // post
+        var task = fetch(url, {
+            method: method,
+            headers: headers,
+            body: JSON.stringify(body)
+        });
+
+        // response
+        task = task.then(function (response) {
+            return response.text().then(function (text) {
+
+                // error
+                if (!response.ok) {
+                    var error = new Error(text);
+                    error.statusCode = response.status;
+                    error.content = response.statusText || getStatusText(response.status);
+                    error.url = response.url;
+                    throw error;
+                }
+
+                // null
+                if (!text && text != 0) {
+                    return {
+                        statusCode: response.status,
+                        content: "No Content"
+                    };
+                }
+
+                // json
+                try {
+                    var content = JSON.parse(text);
+                    if (typeof content == 'object' && content) {
+                        return {
+                            statusCode: response.status,
+                            content: content
+                        };
+                    }
+                } catch (e) { }
+
+                // string
+                return {
+                    statusCode: response.status,
+                    content: text.replace(/^\"|\"$/g, '').replace(/\\\"/g, '"')
+                };
+            })
+        });
+
+        // response.content
+        task = task.then(function (response) {
+
+            // content
+            return response.content;
+        });
+
+        // return
+        return task;
+    }
+
+    function getStatusText(statusCode) {
+
+        // statusTextMap
+        const statusTextMap = {
+            200: 'OK',
+            201: 'Created',
+            202: 'Accepted',
+            204: 'No Content',
+            400: 'Bad Request',
+            401: 'Unauthorized',
+            403: 'Forbidden',
+            404: 'Not Found',
+            405: 'Method Not Allowed',
+            500: 'Internal Server Error',
+            501: 'Not Implemented',
+            502: 'Bad Gateway',
+            503: 'Service Unavailable',
+            504: 'Gateway Timeout'
+        };
+
+        // return
+        return statusTextMap[statusCode] || 'Unknown Status';
+    }
+
+
+    // return
+    return {
+
+        // fields
+
+        // methods
+        send: send,
+        getStatusText: getStatusText
     };
 })();
