@@ -16,6 +16,8 @@ namespace MDP.BlazorCore
         // Fields
         private readonly Dictionary<string, InteropMethod> _interopMethodDictionary = null;
 
+        private readonly AuthorizationPolicy _authorizationPolicy = null;
+
 
         // Constructors
         public InteropManager(Dictionary<string, InteropMethod> interopMethodDictionary)
@@ -26,13 +28,17 @@ namespace MDP.BlazorCore
 
             #endregion
 
-            // Default
+            // InteropMethodDictionary
             _interopMethodDictionary = interopMethodDictionary;
+
+            // AuthorizationPolicy
+            _authorizationPolicy = (new AuthorizationPolicyBuilder()).RequireAuthenticatedUser().Build();
+            if (_authorizationPolicy == null) throw new InvalidOperationException($"{nameof(_authorizationPolicy)}=null");
         }
 
 
         // Methods
-        public Task<object> InvokeAsync(InteropRequest interopRequest)
+        public async Task<object> InvokeAsync(InteropRequest interopRequest)
         {
             #region Contracts
 
@@ -61,8 +67,12 @@ namespace MDP.BlazorCore
             var authorizationService = interopRequest.ServiceProvider.GetService<IAuthorizationService>();
             if (authorizationService == null) throw new InvalidOperationException($"{nameof(authorizationService)}=null");
 
+            // AuthorizationResult
+            var authorizationResult = await authorizationService.AuthorizeAsync(interopRequest.User, null, _authorizationPolicy);
+            if (authorizationResult.Succeeded == false) throw new UnauthorizedAccessException($"{nameof(authorizationResult.Succeeded)}=false");
+
             // Return
-            return interopMethod.InvokeAsync(pathSectionList, interopRequest.Payload, interopRequest.ServiceProvider);
+            return await interopMethod.InvokeAsync(pathSectionList, interopRequest.Payload, interopRequest.ServiceProvider);
         }
 
 
