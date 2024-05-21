@@ -49,12 +49,16 @@ namespace MDP.BlazorCore.Web
             var rootUrl = $"{this.HttpContext.Request.Scheme}://{this.HttpContext.Request.Host}{this.HttpContext.Request.PathBase}";
             if (string.IsNullOrEmpty(rootUrl) == true) throw new InvalidOperationException($"{nameof(rootUrl)}=null");
 
+            // User
+            var user = this.User;
+            if (user == null) throw new InvalidOperationException($"{nameof(user)}=null");
+
             // InvokeAsync
             return _interopManager.InvokeAsync(new InteropRequest
             (
                 new Uri(new Uri(rootUrl), actionModel.Path),
                 actionModel.Payload,
-                this.User,
+                user,
                 _serviceProvider
             ));
         }
