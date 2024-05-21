@@ -11,7 +11,7 @@ namespace MDP.BlazorCore.Lab
     {
         // Methods
         [AllowAnonymous]
-        [InteropRoute("/Sites/User/FindById")]
+        [InteropRoute("/[TenantId]/User/FindById")]
         public async Task<FindByIdResultModel> FindById(FindByIdActionModel actionModel)
         {
             return await Task.FromResult(new FindByIdResultModel());
