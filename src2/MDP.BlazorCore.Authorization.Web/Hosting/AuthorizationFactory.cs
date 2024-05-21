@@ -23,8 +23,8 @@ namespace MDP.BlazorCore.Authorization.Web
             #endregion
 
             // AccessResourceProvider
-            serviceCollection.AddTransient<IAccessResourceProvider, BlazorAccessResourceProvider>();
-            serviceCollection.AddTransient<IAccessResourceProvider, InteropAccessResourceProvider>();
+            applicationBuilder.Services.AddTransient<IAccessResourceProvider, BlazorAccessResourceProvider>();
+            applicationBuilder.Services.AddTransient<IAccessResourceProvider, InteropAccessResourceProvider>();
         }
 
 
