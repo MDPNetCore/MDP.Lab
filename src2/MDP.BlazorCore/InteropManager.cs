@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,35 +32,6 @@ namespace MDP.BlazorCore
 
 
         // Methods
-        public Task<object> InvokeAsync(string path, JsonDocument payload, IServiceProvider serviceProvider)
-        {
-            #region Contracts
-
-            ArgumentNullException.ThrowIfNullOrEmpty(path);
-            ArgumentNullException.ThrowIfNull(payload);
-            ArgumentNullException.ThrowIfNull(serviceProvider);
-
-            #endregion
-
-            // Path
-            if (path.StartsWith("/") == false) path = "/" + path;
-            if (path.EndsWith("/") == true) path = path.TrimEnd('/');
-
-            // PathSectionList
-            var pathSectionList = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            if (pathSectionList == null) throw new InvalidOperationException($"{nameof(pathSectionList)}=null");
-            if (pathSectionList.Count == 0) throw new InvalidOperationException($"{nameof(pathSectionList)}.Count=0");
-
-            // InteropMethod
-            InteropMethod interopMethod = null;
-            if (interopMethod == null) interopMethod = this.FindInteropMethod(path);
-            if (interopMethod == null) interopMethod = this.FindInteropMethod(pathSectionList);
-            if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
-
-            // Return
-            return interopMethod.InvokeAsync(pathSectionList, payload, serviceProvider);
-        }
-
         public Task<object> InvokeAsync(InteropRequest interopRequest)
         {
             #region Contracts
@@ -84,6 +56,10 @@ namespace MDP.BlazorCore
             if (interopMethod == null) interopMethod = this.FindInteropMethod(path);
             if (interopMethod == null) interopMethod = this.FindInteropMethod(pathSectionList);
             if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
+
+            // AuthorizationService
+            var authorizationService = interopRequest.ServiceProvider.GetService<IAuthorizationService>();
+            if (authorizationService == null) throw new InvalidOperationException($"{nameof(authorizationService)}=null");
 
             // Return
             return interopMethod.InvokeAsync(pathSectionList, interopRequest.Payload, interopRequest.ServiceProvider);
