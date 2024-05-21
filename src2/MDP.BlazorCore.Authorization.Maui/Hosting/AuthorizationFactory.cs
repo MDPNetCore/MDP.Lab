@@ -61,6 +61,7 @@ namespace MDP.BlazorCore.Authorization.Maui
 
             // AccessResourceProvider
             serviceCollection.AddTransient<IAccessResourceProvider, BlazorAccessResourceProvider>();
+            serviceCollection.AddTransient<IAccessResourceProvider, InteropAccessResourceProvider>();
         }
 
 
