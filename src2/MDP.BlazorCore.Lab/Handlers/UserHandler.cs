@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MDP.BlazorCore.Lab
 {
-    public class UserService : InteropService
+    public class UserHandler : InteropHandler
     {
         // Methods
         [AllowAnonymous]
