@@ -18,6 +18,12 @@
     public IServiceProvider _serviceProvider { get; set; }
 
     [Inject]
+    public NavigationManager _navigationManager { get; set; }
+
+    [Inject]
+    public AuthenticationStateProvider _authenticationStateProvider { get; set; }
+
+    [Inject]
     public InteropManager _interopManager { get; set; }
 
     private DotNetObjectReference<PageOutlet> _interopGateway = null;
