@@ -62,9 +62,9 @@
 
         #endregion
 
-        // RootUrl
-        var rootUrl = _navigationManager.BaseUri;
-        if (string.IsNullOrEmpty(rootUrl) == true) throw new InvalidOperationException($"{nameof(rootUrl)}=null");
+        // RootUri
+        var rootUri = _navigationManager.BaseUri;
+        if (string.IsNullOrEmpty(rootUri) == true) throw new InvalidOperationException($"{nameof(rootUri)}=null");
 
         // User
         var user = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User;
@@ -73,7 +73,7 @@
         // InvokeAsync
         return await _interopManager?.InvokeAsync(new InteropRequest
         (
-            new Uri(new Uri(rootUrl), path),
+            new Uri(new Uri(rootUri), path),
             payload,
             user,
             _serviceProvider

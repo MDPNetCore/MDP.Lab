@@ -11,20 +11,20 @@ namespace MDP.BlazorCore
     public class InteropResource
     {
         // Constructors
-        public InteropResource(Uri url)
+        public InteropResource(Uri uri)
         {
             #region Contracts
 
-            ArgumentNullException.ThrowIfNull(url);
+            ArgumentNullException.ThrowIfNull(uri);
 
             #endregion
 
             // Default
-            this.Url = url;
+            this.Uri = uri;
         }
 
 
         // Properties
-        public Uri Url { get; private set; }
+        public Uri Uri { get; private set; }
     }
 }

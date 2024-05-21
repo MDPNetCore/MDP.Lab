@@ -47,7 +47,7 @@ namespace MDP.BlazorCore
             #endregion
 
             // Path
-            var path = interopRequest.Url.AbsolutePath; 
+            var path = interopRequest.Uri.AbsolutePath; 
             if (path.StartsWith("/") == false) path = "/" + path;
             if (path.EndsWith("/") == true) path = path.TrimEnd('/');
             if (string.IsNullOrEmpty(path) == true) throw new InvalidOperationException($"{nameof(path)}=null");

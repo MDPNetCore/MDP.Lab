@@ -11,11 +11,11 @@ namespace MDP.BlazorCore
     public class InteropRequest
     {
         // Constructors
-        public InteropRequest(Uri url, JsonDocument payload, ClaimsPrincipal user, IServiceProvider serviceProvider)
+        public InteropRequest(Uri uri, JsonDocument payload, ClaimsPrincipal user, IServiceProvider serviceProvider)
         {
             #region Contracts
 
-            ArgumentNullException.ThrowIfNull(url);
+            ArgumentNullException.ThrowIfNull(uri);
             ArgumentNullException.ThrowIfNull(payload);
             ArgumentNullException.ThrowIfNull(user);
             ArgumentNullException.ThrowIfNull(serviceProvider);
@@ -23,18 +23,18 @@ namespace MDP.BlazorCore
             #endregion
 
             // Default
-            this.Url = url;
+            this.Uri = uri;
             this.Payload = payload;
             this.User = user;
             this.ServiceProvider = serviceProvider;
 
             // Resource
-            this.Resource = new InteropResource(url);
+            this.Resource = new InteropResource(uri);
         }
 
 
         // Properties
-        public Uri Url { get; private set; }
+        public Uri Uri { get; private set; }
         
         public JsonDocument Payload { get; private set; }
 

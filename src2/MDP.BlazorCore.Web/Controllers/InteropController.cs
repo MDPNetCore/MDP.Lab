@@ -45,9 +45,9 @@ namespace MDP.BlazorCore.Web
 
             #endregion
 
-            // RootUrl
-            var rootUrl = $"{this.HttpContext.Request.Scheme}://{this.HttpContext.Request.Host}{this.HttpContext.Request.PathBase}";
-            if (string.IsNullOrEmpty(rootUrl) == true) throw new InvalidOperationException($"{nameof(rootUrl)}=null");
+            // RootUri
+            var rootUri = $"{this.HttpContext.Request.Scheme}://{this.HttpContext.Request.Host}{this.HttpContext.Request.PathBase}";
+            if (string.IsNullOrEmpty(rootUri) == true) throw new InvalidOperationException($"{nameof(rootUri)}=null");
 
             // User
             var user = this.User;
@@ -56,7 +56,7 @@ namespace MDP.BlazorCore.Web
             // InvokeAsync
             return _interopManager.InvokeAsync(new InteropRequest
             (
-                new Uri(new Uri(rootUrl), actionModel.Path),
+                new Uri(new Uri(rootUri), actionModel.Path),
                 actionModel.Payload,
                 user,
                 _serviceProvider
