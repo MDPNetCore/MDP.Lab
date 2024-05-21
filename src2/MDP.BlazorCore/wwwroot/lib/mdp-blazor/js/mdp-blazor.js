@@ -61,7 +61,7 @@ mdp.blazor.interopManager = (function () {
         } 
 
         // remoteInvoke
-        return mdp.blazor.httpClient.send("/.blazor/invoke", {
+        return mdp.blazor.httpClient.send("/.blazor/interop/invoke", {
             "path": path,
             "payload": payload
         });
