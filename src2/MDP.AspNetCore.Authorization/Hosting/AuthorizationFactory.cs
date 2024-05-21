@@ -62,7 +62,7 @@ namespace MDP.AspNetCore.Authorization
             });
 
             // AccessResourceProvider
-            applicationBuilder.Services.AddTransient<IAccessResourceProvider, HttpAccessResourceProvider>();            
+            applicationBuilder.Services.AddTransient<IAccessResourceProvider, WebAccessResourceProvider>();            
         }
 
 

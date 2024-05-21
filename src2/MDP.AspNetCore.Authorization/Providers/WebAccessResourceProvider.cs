@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MDP.AspNetCore.Authorization
 {
-    public class HttpAccessResourceProvider : IAccessResourceProvider
+    public class WebAccessResourceProvider : IAccessResourceProvider
     {
         // Methods
         public AccessResource Create(object resource = null)
