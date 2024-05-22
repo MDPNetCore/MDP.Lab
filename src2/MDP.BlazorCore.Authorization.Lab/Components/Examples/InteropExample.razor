@@ -22,7 +22,7 @@
                 }).then(result => {
                     alert(JSON.stringify(result));
                 }).catch(error => {
-                    alert("Error calling .NET method: " + error.message);
+                    alert(error.message);
                 });
             });
 

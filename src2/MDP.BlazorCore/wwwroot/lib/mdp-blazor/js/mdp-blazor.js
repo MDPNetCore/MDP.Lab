@@ -57,7 +57,13 @@ mdp.blazor.interopManager = (function () {
 
         // localInvoke
         if (_interopComponent) {
-            return _interopComponent.invokeMethodAsync("InvokeAsync", path, payload);
+            return _interopComponent.invokeMethodAsync("InvokeAsync", path, payload).then(function (response) {
+                if (response.succeeded == true) {
+                    return response.result;
+                } else {
+                    throw new Error(response.errorMessage);
+                }
+            });
         } 
 
         // remoteInvoke
