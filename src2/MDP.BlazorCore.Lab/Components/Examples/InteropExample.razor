@@ -14,7 +14,7 @@
             document.getElementById("runDotNetButton").addEventListener("click", function (event) {
 
                 // invokeMethod
-                mdp.blazor.interopManager.invokeAsync("/T0001/User/FindByTenantId", {
+                mdp.blazor.interopManager.invokeAsync("/User/FindByTenantId/T0001", {
                     "user": {
                         "userId": "U0001",
                         "name": "Clark"
