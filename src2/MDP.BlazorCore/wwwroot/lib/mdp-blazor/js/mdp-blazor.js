@@ -16,7 +16,7 @@ mdp.blazor.eventManager = (function () {
             try {                
                 pageData = JSON.parse(pageDataElement.getAttribute("data-value"));
             } catch (error) {
-                console.error("pageData=null, error=", error);                
+                console.error("pageData=null, error=", error.message);                
             }
         } else {
             console.log("pageDataElement=null");

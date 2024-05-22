@@ -38,7 +38,7 @@ namespace MDP.BlazorCore
 
 
         // Methods
-        public async Task<object> InvokeAsync(InteropRequest interopRequest)
+        public async Task<InteropResponse> InvokeAsync(InteropRequest interopRequest)
         {
             #region Contracts
 
@@ -46,37 +46,57 @@ namespace MDP.BlazorCore
 
             #endregion
 
-            // Path
-            var path = interopRequest.Uri.AbsolutePath; 
-            if (path.StartsWith("/") == false) path = "/" + path;
-            if (path.EndsWith("/") == true) path = path.TrimEnd('/');
-            if (string.IsNullOrEmpty(path) == true) throw new InvalidOperationException($"{nameof(path)}=null");
+            // Execute
+            try
+            {
+                // Path
+                var path = interopRequest.Uri.AbsolutePath;
+                if (path.StartsWith("/") == false) path = "/" + path;
+                if (path.EndsWith("/") == true) path = path.TrimEnd('/');
+                if (string.IsNullOrEmpty(path) == true) throw new InvalidOperationException($"{nameof(path)}=null");
 
-            // PathSectionList
-            var pathSectionList = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            if (pathSectionList == null) throw new InvalidOperationException($"{nameof(pathSectionList)}=null");
-            if (pathSectionList.Count == 0) throw new InvalidOperationException($"{nameof(pathSectionList)}.Count=0");
+                // PathSectionList
+                var pathSectionList = path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                if (pathSectionList == null) throw new InvalidOperationException($"{nameof(pathSectionList)}=null");
+                if (pathSectionList.Count == 0) throw new InvalidOperationException($"{nameof(pathSectionList)}.Count=0");
 
-            // InteropMethod
-            InteropMethod interopMethod = null;
-            if (interopMethod == null) interopMethod = this.FindInteropMethod(path);
-            if (interopMethod == null) interopMethod = this.FindInteropMethod(pathSectionList);
-            if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
+                // InteropMethod
+                InteropMethod interopMethod = null;
+                if (interopMethod == null) interopMethod = this.FindInteropMethod(path);
+                if (interopMethod == null) interopMethod = this.FindInteropMethod(pathSectionList);
+                if (interopMethod == null) throw new InvalidOperationException($"{nameof(interopMethod)}=null");
 
-            // AuthorizationService
-            var authorizationService = interopRequest.ServiceProvider.GetService<IAuthorizationService>();
-            if (authorizationService == null) throw new InvalidOperationException($"{nameof(authorizationService)}=null");
+                // AuthorizationService
+                var authorizationService = interopRequest.ServiceProvider.GetService<IAuthorizationService>();
+                if (authorizationService == null) throw new InvalidOperationException($"{nameof(authorizationService)}=null");
 
-            // AuthorizationPolicy
-            var authorizationPolicy = await this.CreateAuthorizationPolicyAsync();
-            if (authorizationPolicy == null) throw new InvalidOperationException($"{nameof(authorizationPolicy)}=null");
+                // AuthorizationPolicy
+                var authorizationPolicy = await this.CreateAuthorizationPolicyAsync();
+                if (authorizationPolicy == null) throw new InvalidOperationException($"{nameof(authorizationPolicy)}=null");
 
-            // AuthorizationResult
-            var authorizationResult = await authorizationService.AuthorizeAsync(interopRequest.User, interopRequest.Resource, authorizationPolicy);
-            if (authorizationResult.Succeeded == false) throw new UnauthorizedAccessException($"{nameof(authorizationResult.Succeeded)}=false");
+                // AuthorizationResult
+                var authorizationResult = await authorizationService.AuthorizeAsync(interopRequest.User, interopRequest.Resource, authorizationPolicy);
+                if (authorizationResult.Succeeded == false) throw new UnauthorizedAccessException($"Authorization failed for resource '{interopRequest.Uri.ToString()}'");
 
-            // Return
-            return await interopMethod.InvokeAsync(pathSectionList, interopRequest.Payload, interopRequest.ServiceProvider);
+                // InvokeAsync
+                var result = await interopMethod.InvokeAsync(pathSectionList, interopRequest.Payload, interopRequest.ServiceProvider);
+           
+                // Return
+                return new InteropResponse()
+                {
+                    Succeeded = true,
+                    Result = result
+                };
+            }
+            catch (Exception exception)
+            {
+                // Return
+                return new InteropResponse()
+                {
+                    Succeeded = false,
+                    ErrorMessage = exception.Message
+                };
+            }
         }
 
 

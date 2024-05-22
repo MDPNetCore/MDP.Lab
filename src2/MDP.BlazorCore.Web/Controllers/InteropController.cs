@@ -37,7 +37,7 @@ namespace MDP.BlazorCore.Web
         // Methods
         [AllowAnonymous]
         [Route("/.blazor/interop/invoke")]
-        public Task<object> InvokeAsync([FromBody] InvokeActionModel actionModel)
+        public Task<InteropResponse> InvokeAsync([FromBody] InvokeActionModel actionModel)
         {
             #region Contracts
 
