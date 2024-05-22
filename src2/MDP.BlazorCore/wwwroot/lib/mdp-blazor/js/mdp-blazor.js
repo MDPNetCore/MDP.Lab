@@ -67,9 +67,12 @@ mdp.blazor.interopManager = (function () {
         } 
 
         // remoteInvoke
-        return mdp.blazor.httpClient.sendAsync("/.blazor/interop/invoke", {
-            "path": path,
-            "payload": payload
+        return mdp.blazor.httpClient.sendAsync("/.blazor/interop/invoke", { "path": path, "payload": payload }).then(function (response) {
+            if (response.succeeded == true) {
+                return response.result;
+            } else {
+                throw new Error(response.errorMessage);
+            }
         });
     };
 
