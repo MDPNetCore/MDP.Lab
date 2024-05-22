@@ -9,10 +9,10 @@ namespace MDP.BlazorCore
     public class InteropResponse
     {
         // Properties
-        public bool Succeeded { get; internal set; }
+        public bool Succeeded { get; set; }
 
-        public object Result { get; internal set; }
+        public object Result { get; set; }
 
-        public string ErrorMessage { get; internal set; }
+        public string ErrorMessage { get; set; }
     }
 }

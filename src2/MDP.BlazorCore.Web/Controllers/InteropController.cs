@@ -37,7 +37,7 @@ namespace MDP.BlazorCore.Web
         // Methods
         [AllowAnonymous]
         [Route("/.blazor/interop/invoke")]
-        public Task<InteropResponse> InvokeAsync([FromBody] InvokeActionModel actionModel)
+        public async Task<InteropResponse> InvokeAsync([FromBody] InvokeActionModel actionModel)
         {
             #region Contracts
 
@@ -45,22 +45,42 @@ namespace MDP.BlazorCore.Web
 
             #endregion
 
-            // RootUri
-            var rootUri = $"{this.HttpContext.Request.Scheme}://{this.HttpContext.Request.Host}{this.HttpContext.Request.PathBase}";
-            if (string.IsNullOrEmpty(rootUri) == true) throw new InvalidOperationException($"{nameof(rootUri)}=null");
+            // Execute
+            try
+            {
+                // RootUri
+                var rootUri = $"{this.HttpContext.Request.Scheme}://{this.HttpContext.Request.Host}{this.HttpContext.Request.PathBase}";
+                if (string.IsNullOrEmpty(rootUri) == true) throw new InvalidOperationException($"{nameof(rootUri)}=null");
 
-            // User
-            var user = this.User;
-            if (user == null) throw new InvalidOperationException($"{nameof(user)}=null");
+                // User
+                var user = this.User;
+                if (user == null) throw new InvalidOperationException($"{nameof(user)}=null");
 
-            // InvokeAsync
-            return _interopManager.InvokeAsync(new InteropRequest
-            (
-                new Uri(new Uri(rootUri), actionModel.Path),
-                actionModel.Payload,
-                user,
-                _serviceProvider
-            ));
+                // InvokeAsync
+                var result = await _interopManager.InvokeAsync(new InteropRequest
+                (
+                    new Uri(new Uri(rootUri), actionModel.Path),
+                    actionModel.Payload,
+                    user,
+                    _serviceProvider
+                ));
+
+                // Return
+                return new InteropResponse()
+                {
+                    Succeeded = true,
+                    Result = result
+                };
+            }
+            catch (Exception exception)
+            {
+                // Return
+                return new InteropResponse()
+                {
+                    Succeeded = false,
+                    ErrorMessage = exception.Message
+                };
+            }
         }
 
         public class InvokeActionModel 

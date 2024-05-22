@@ -62,22 +62,43 @@
 
         #endregion
 
-        // RootUri
-        var rootUri = _navigationManager.BaseUri;
-        if (string.IsNullOrEmpty(rootUri) == true) throw new InvalidOperationException($"{nameof(rootUri)}=null");
+        // Execute
+        try
+        {
+            // RootUri
+            var rootUri = _navigationManager.BaseUri;
+            if (string.IsNullOrEmpty(rootUri) == true) throw new InvalidOperationException($"{nameof(rootUri)}=null");
 
-        // User
-        var user = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User;
-        if (user == null) throw new InvalidOperationException($"{nameof(user)}=null");
+            // User
+            var user = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User;
+            if (user == null) throw new InvalidOperationException($"{nameof(user)}=null");
 
-        // InvokeAsync
-        return await _interopManager?.InvokeAsync(new InteropRequest
-        (
-            new Uri(new Uri(rootUri), path),
-            payload,
-            user,
-            _serviceProvider
-        ));
+            // InvokeAsync
+            var result = await _interopManager?.InvokeAsync(new InteropRequest
+            (
+                new Uri(new Uri(rootUri), path),
+                payload,
+                user,
+                _serviceProvider
+            ));  
+            
+            // Return
+            return new InteropResponse()
+            {
+                Succeeded = true,
+                Result = result
+            };
+        }
+        catch (Exception exception)
+        {
+            // Return
+            return new InteropResponse()
+            {
+                Succeeded = false,
+                ErrorMessage = exception.Message
+            };
+        }
+        
     }
 }
 
