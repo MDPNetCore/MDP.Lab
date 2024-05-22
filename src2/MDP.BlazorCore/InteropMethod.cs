@@ -85,6 +85,31 @@ namespace MDP.BlazorCore
             return true;
         }
 
+        public Task<object> InvokeAsync(List<string> pathSectionList, JsonDocument payload, IServiceProvider serviceProvider)
+        {
+            #region Contracts
+
+            ArgumentNullException.ThrowIfNull(pathSectionList);
+            ArgumentNullException.ThrowIfNull(payload);
+            ArgumentNullException.ThrowIfNull(serviceProvider);
+
+            #endregion
+
+            // ParameterProvider
+            var parameterProvider = new InteropParameterProvider(this.CreateParameterDictionary(pathSectionList), payload);
+
+            // Instance
+            var instance = serviceProvider.GetService(_method.DeclaringType);
+            if (instance == null) throw new InvalidOperationException($"{nameof(instance)}=null");
+
+            // Invoke
+            var result = MDP.Reflection.Activator.InvokeMethodAsync(instance, _method.Name, parameterProvider);
+            if (result == null) throw new InvalidOperationException($"{nameof(instance)}=null");
+
+            // Return
+            return result;
+        }
+
         private Dictionary<string, string> CreateParameterDictionary(List<string> pathSectionList)
         {
             #region Contracts
@@ -115,31 +140,6 @@ namespace MDP.BlazorCore
 
             // Return
             return parameterDictionary;
-        }
-
-        public Task<object> InvokeAsync(List<string> pathSectionList, JsonDocument payload, IServiceProvider serviceProvider)
-        {
-            #region Contracts
-
-            ArgumentNullException.ThrowIfNull(pathSectionList);
-            ArgumentNullException.ThrowIfNull(payload);
-            ArgumentNullException.ThrowIfNull(serviceProvider);
-
-            #endregion
-
-            // ParameterProvider
-            var parameterProvider = new InteropParameterProvider(this.CreateParameterDictionary(pathSectionList), payload);
-
-            // Instance
-            var instance = serviceProvider.GetService(_method.DeclaringType);
-            if (instance == null) throw new InvalidOperationException($"{nameof(instance)}=null");
-
-            // Invoke
-            var result = MDP.Reflection.Activator.InvokeMethodAsync(instance, _method.Name, parameterProvider);
-            if (result == null) throw new InvalidOperationException($"{nameof(instance)}=null");
-
-            // Return
-            return result;
         }
     }
 }

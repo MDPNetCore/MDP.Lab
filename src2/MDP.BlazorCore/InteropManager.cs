@@ -16,24 +16,24 @@ namespace MDP.BlazorCore
         // Fields
         private readonly Dictionary<string, InteropMethod> _interopMethodDictionary = null;
 
-        private readonly AuthorizationPolicy _authorizationPolicy = null;
+        private readonly IAuthorizationPolicyProvider _authorizationPolicyProvider = null;
+
+        private AuthorizationPolicy _authorizationPolicy = null;
 
 
         // Constructors
-        public InteropManager(Dictionary<string, InteropMethod> interopMethodDictionary)
+        public InteropManager(Dictionary<string, InteropMethod> interopMethodDictionary, IAuthorizationPolicyProvider authorizationPolicyProvider)
         {
             #region Contracts
 
             ArgumentNullException.ThrowIfNull(interopMethodDictionary);
+            ArgumentNullException.ThrowIfNull(authorizationPolicyProvider);
 
             #endregion
 
-            // InteropMethodDictionary
+            // Default
             _interopMethodDictionary = interopMethodDictionary;
-
-            // AuthorizationPolicy
-            _authorizationPolicy = (new AuthorizationPolicyBuilder()).RequireAuthenticatedUser().Build();
-            if (_authorizationPolicy == null) throw new InvalidOperationException($"{nameof(_authorizationPolicy)}=null");
+            _authorizationPolicyProvider = authorizationPolicyProvider;
         }
 
 
@@ -67,14 +67,32 @@ namespace MDP.BlazorCore
             var authorizationService = interopRequest.ServiceProvider.GetService<IAuthorizationService>();
             if (authorizationService == null) throw new InvalidOperationException($"{nameof(authorizationService)}=null");
 
+            // AuthorizationPolicy
+            var authorizationPolicy = await this.CreateAuthorizationPolicyAsync();
+            if (authorizationPolicy == null) throw new InvalidOperationException($"{nameof(authorizationPolicy)}=null");
+
             // AuthorizationResult
-            var authorizationResult = await authorizationService.AuthorizeAsync(interopRequest.User, interopRequest.Resource, _authorizationPolicy);
+            var authorizationResult = await authorizationService.AuthorizeAsync(interopRequest.User, interopRequest.Resource, authorizationPolicy);
             if (authorizationResult.Succeeded == false) throw new UnauthorizedAccessException($"{nameof(authorizationResult.Succeeded)}=false");
 
             // Return
             return await interopMethod.InvokeAsync(pathSectionList, interopRequest.Payload, interopRequest.ServiceProvider);
         }
 
+
+        private async Task<AuthorizationPolicy> CreateAuthorizationPolicyAsync()
+        {
+            // Require
+            if (_authorizationPolicy != null) return _authorizationPolicy;
+
+            // Create
+            var authorizationPolicy = await _authorizationPolicyProvider.GetDefaultPolicyAsync();
+            if (authorizationPolicy == null) throw new InvalidOperationException($"{nameof(authorizationPolicy)}=null");
+            _authorizationPolicy = authorizationPolicy;
+
+            // Return
+            return _authorizationPolicy;
+        }
 
         private InteropMethod FindInteropMethod(string path)
         {

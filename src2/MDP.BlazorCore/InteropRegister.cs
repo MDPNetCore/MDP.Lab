@@ -1,4 +1,5 @@
 ﻿using MDP.Registration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -38,14 +39,18 @@ namespace MDP.BlazorCore
                 return true;
             }).ToList();
 
+            // InteropHandlerTypeList.Register
+            foreach (var interopHandlerType in interopHandlerTypeList)
+            {
+                // Register
+                serviceCollection.AddTransient(interopHandlerType);
+            }
+
             // InteropMethodDictionary
             var interopMethodDictionary = new Dictionary<string, InteropMethod>(StringComparer.OrdinalIgnoreCase);
             foreach (var interopHandlerType in interopHandlerTypeList)
             {
-                // RegisterType
-                serviceCollection.AddTransient(interopHandlerType);
-
-                // RegisterMethod
+                // MethodList
                 var methodList = interopHandlerType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
                 foreach (var method in methodList)
                 {
@@ -63,7 +68,15 @@ namespace MDP.BlazorCore
             }
 
             // InteropManager
-            serviceCollection.AddSingleton(new InteropManager(interopMethodDictionary));
+            serviceCollection.AddSingleton<InteropManager>(serviceProvider =>
+            {
+                // AuthorizationPolicyProvider
+                var authorizationPolicyProvider = serviceProvider.GetService<IAuthorizationPolicyProvider>();
+                if (authorizationPolicyProvider == null) throw new InvalidOperationException($"{nameof(authorizationPolicyProvider)}=null");
+
+                // Return
+                return new InteropManager(interopMethodDictionary, authorizationPolicyProvider);
+            });
         }
     }
 }
