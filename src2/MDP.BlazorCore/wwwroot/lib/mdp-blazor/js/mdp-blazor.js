@@ -61,7 +61,7 @@ mdp.blazor.interopManager = (function () {
         } 
 
         // remoteInvoke
-        return mdp.blazor.httpClient.send("/.blazor/interop/invoke", {
+        return mdp.blazor.httpClient.sendAsync("/.blazor/interop/invoke", {
             "path": path,
             "payload": payload
         });
@@ -82,7 +82,7 @@ mdp.blazor.interopManager = (function () {
 mdp.blazor.httpClient = (function () {
 
     // methods
-    function send(url, body, headers, method) {
+    function sendAsync(url, body, headers, method) {
 
         // headers
         if (headers == null) headers = {};
@@ -179,7 +179,7 @@ mdp.blazor.httpClient = (function () {
     return {
 
         // methods
-        send: send,
+        sendAsync: sendAsync,
         getStatusText: getStatusText
     };
 })();
